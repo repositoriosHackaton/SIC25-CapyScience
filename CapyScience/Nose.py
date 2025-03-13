@@ -63,38 +63,39 @@ root.tk.call('set_theme', 'dark')
 root.geometry("980x600")
 
 frame = tkin.Frame(root)
-frame.grid(row=0, column=0, padx=30, pady=30,ipady=5)
+frame.grid(row=1, column=0, padx=30,ipady=5)
 frame.grid_propagate(False)
-frame.config(width="400", height="450")
+frame.config(width="400", height="400")
 frame.config(bg = 'black')
 
 button = tkin.Button(root, text="Insertar", font=("Arial", 15), command=openFile)
-button.grid(row=1, column=0)
+button.grid(row=2, column=0, pady=10)
 
 
 mapFrame = tkin.Frame()
-mapFrame.grid(row=0, column=1, padx=30, pady=30)
+mapFrame.grid(row=0, column=1, padx=30, rowspan=2)
 mapFrame.grid_propagate(False)
 mapFrame.config(width="450", height="450")
-mapFrame.config(bg = 'black')
+mapFrame.config(bg = 'gray')
 
 captureButton = tkin.Button(root, text="Capturar", font=("Arial", 15), command=capturar_imagen)
-captureButton.grid(row=1, column=1)
+captureButton.grid(row=2, column=1)
 
 map_widget = TkinterMapView(mapFrame, width=450, height=450)
 map_widget.set_tile_server("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}")
-map_widget.set_position(20.5937, 78.9629)  # Coordenadas de ejemplo (India)
+map_widget.set_position(6.42375, -66.58973)  # Coordenadas de ejemplo (India)
 map_widget.set_zoom(5)
 map_widget.pack()
 
-label = tkin.Label(frame, text="Inserte una imagen", font=("Arial", 20))
-label.grid(row=0, column=0, sticky="n", pady=10)
+label = tkin.Label(root, text="Inserte una imagen", font=("Arial", 20))
+label.grid(row=0, column=0, sticky="n", pady=20)
 
 resultado_label = tkin.Label(frame, text="", font=("Arial", 10))
-resultado_label.grid(row=1, column=0, sticky="w")
+resultado_label.grid(row=0, column=0, sticky="w")
+resultado_label.config(bg="black")
 
 imagen_label = tkin.Label(frame)
-imagen_label.grid(row=2, column=0, padx=23, pady=10, sticky="nsew")
+imagen_label.grid(row=1, column=0, padx=23, pady=10, sticky="nsew")
 imagen_label.config(bg="black")
 
 
