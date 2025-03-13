@@ -1,35 +1,11 @@
 import tkinter as tkin
 from tkinter import filedialog
 import tensorflow as tf
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageGrab
 import numpy as np
+from tkintermapview import TkinterMapView
 
-modelo = tf.keras.models.load_model("C:/Users/gusem/OneDrive/Desktop/Gustavo Rivas/Interfaz/Modelo_quelegustealuis.h5")
-
-
-root = tkin.Tk()
-root.title("Interfaz piloto")
-root.resizable(False, False)
-root.iconbitmap("C:/Users/gusem/OneDrive/Desktop/Gustavo Rivas/Interfaz/fuego.ico")
-
-root.tk.call('source', 'Azure/azure.tcl')
-root.tk.call('set_theme', 'dark')
-
-root.geometry("800x550")
-
-frame = tkin.Frame()
-frame.pack(fill="none", anchor="center", expand="True")
-frame.config(width="400", height="500")
-
-imagen_label = tkin.Label(frame, bg="white")
-imagen_label.place(bordermode="inside", x=3, y=50)
-
-label = tkin.Label(frame, text="Inserte una imagen", font=("Arial", 20))
-label.place(bordermode="inside", x = 60)
-
-resultado_label = tkin.Label(frame, text="", font=("Arial", 20))
-resultado_label.place(bordermode="inside", x=0, y=50)
-
+modelo = tf.keras.models.load_model("C:/Users/gusem/OneDrive/Desktop/Gustavo Rivas/Interfaz/Pushear/SIC25-CapyScience/CapyScience/Modelo_quelegustealuis.h5")
 
 def mostrar_resultado(resultado):
     resultado_label.config(text=f"Resultado: {resultado}", font=("Arial", 10))
@@ -58,12 +34,68 @@ def procesar_imagen(ruta_imagen):
     imagen_array = np.expand_dims(imagen_array, axis=0)
     clasificar_imagen(imagen_array)
 
+def capturar_imagen():
+    x = root.winfo_rootx() + mapFrame.winfo_x()
+    y = root.winfo_rooty() + mapFrame.winfo_y()
+    x1 = x + mapFrame.winfo_width()
+    y1 = y + mapFrame.winfo_height()
+    ImageGrab.grab().crop((x, y, x1, y1)).save("captura.jpg")
+    print("Imagen capturada y guardada como captura.jpg")
+    procesar_imagen("captura.jpg")
+
 def openFile():
     file = filedialog.askopenfilename(title="Seleccionar archivo", filetypes=[("Archivos de imagen", "*.png"), ("Archivos de imagen", "*.jpg")])
     procesar_imagen(file)
     print(file)
 
-button = tkin.Button(frame, text="Insertar", font=("Arial", 15), command= openFile)
-button.place(bordermode="inside", x = 140, y = 410)
+
+#Ventana
+
+
+root = tkin.Tk()
+root.title("Interfaz piloto")
+root.resizable(False, False)
+root.iconbitmap("C:/Users/gusem/OneDrive/Desktop/Gustavo Rivas/Interfaz/Pushear/SIC25-CapyScience/CapyScience/fuego.ico")
+
+root.tk.call('source', 'C:/Users/gusem/OneDrive/Desktop/Gustavo Rivas/Interfaz/Pushear/SIC25-CapyScience/CapyScience/Azure/azure.tcl')
+root.tk.call('set_theme', 'dark')
+
+root.geometry("980x600")
+
+frame = tkin.Frame(root)
+frame.grid(row=0, column=0, padx=30, pady=30,ipady=5)
+frame.grid_propagate(False)
+frame.config(width="400", height="450")
+frame.config(bg = 'black')
+
+button = tkin.Button(root, text="Insertar", font=("Arial", 15), command=openFile)
+button.grid(row=1, column=0)
+
+
+mapFrame = tkin.Frame()
+mapFrame.grid(row=0, column=1, padx=30, pady=30)
+mapFrame.grid_propagate(False)
+mapFrame.config(width="450", height="450")
+mapFrame.config(bg = 'black')
+
+captureButton = tkin.Button(root, text="Capturar", font=("Arial", 15), command=capturar_imagen)
+captureButton.grid(row=1, column=1)
+
+map_widget = TkinterMapView(mapFrame, width=450, height=450)
+map_widget.set_tile_server("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}")
+map_widget.set_position(20.5937, 78.9629)  # Coordenadas de ejemplo (India)
+map_widget.set_zoom(5)
+map_widget.pack()
+
+label = tkin.Label(frame, text="Inserte una imagen", font=("Arial", 20))
+label.grid(row=0, column=0, sticky="n", pady=10)
+
+resultado_label = tkin.Label(frame, text="", font=("Arial", 10))
+resultado_label.grid(row=1, column=0, sticky="w")
+
+imagen_label = tkin.Label(frame)
+imagen_label.grid(row=2, column=0, padx=23, pady=10, sticky="nsew")
+imagen_label.config(bg="black")
+
 
 root.mainloop()
